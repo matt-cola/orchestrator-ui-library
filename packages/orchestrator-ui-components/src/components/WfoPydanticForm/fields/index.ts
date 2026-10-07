@@ -1,5 +1,6 @@
 export * from './WfoTextArea';
 export * from './WfoText';
+export * from './WfoPassword';
 export * from './WfoLabel';
 export * from './WfoDivider';
 export * from './WfoCheckbox';

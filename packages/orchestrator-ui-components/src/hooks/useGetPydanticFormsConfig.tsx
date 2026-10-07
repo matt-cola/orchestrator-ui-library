@@ -31,6 +31,7 @@ import {
   WfoMarkdownField,
   WfoMultiCheckboxField,
   WfoObjectField,
+  WfoPassword,
   WfoRadio,
   WfoSummary,
   WfoText,
@@ -205,11 +206,30 @@ const useGetComponentMatcherExtender = (): ComponentMatcherExtender => {
             return format === PydanticFormFieldFormat.MARKDOWN;
           },
         },
+        {
+          id: 'secrets',
+          ElementMatch: {
+            Element: WfoPassword,
+            isControlledElement: true,
+          },
+          matcher(field) {
+            // Write-only sealed secrets must render as a password box, not as visible text.
+            // The format is a plain string until pydantic-forms ships SEALED_SECRET in its enum,
+            // hence the cast (same pattern as the 'callout' and 'summary' matchers above).
+            return (
+              field.type === PydanticFormFieldType.STRING
+              && field.format === ('sealedSecret' as PydanticFormFieldFormat)
+            );
+          },
+          validator: zodValidationPresets.string,
+        },
         ...currentMatchers
           .filter((matcher) => matcher.id !== 'text')
           .filter((matcher) => matcher.id !== 'array')
           .filter((matcher) => matcher.id !== 'object')
-          .filter((matcher) => matcher.id !== 'list'),
+          .filter((matcher) => matcher.id !== 'list')
+          // Replace the package default 'secrets' matcher so it does not win with its own element.
+          .filter((matcher) => matcher.id !== 'secrets'),
         {
           id: 'object',
           ElementMatch: {
