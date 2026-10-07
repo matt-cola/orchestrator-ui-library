@@ -165,6 +165,7 @@ export type Process = {
     page: Pick<Subscription, 'subscriptionId' | 'description'>[];
   };
   note: string | null;
+  userPermissions?: FormUserPermissions;
 };
 
 // These step statusses match the ones in the backend
@@ -225,6 +226,13 @@ export enum ProcessStatus {
 }
 
 export const ProcessDoneStatuses = [ProcessStatus.COMPLETED, ProcessStatus.ABORTED];
+
+export const ProcessRetryableStatuses = [
+  ProcessStatus.FAILED,
+  ProcessStatus.API_UNAVAILABLE,
+  ProcessStatus.INCONSISTENT_DATA,
+  ProcessStatus.WAITING,
+];
 
 export interface StepState {
   [index: string]: object | boolean | string | number | [];
@@ -593,6 +601,11 @@ export type OrchestratorConfig = {
   enableAoStackStatus: boolean;
   aoStackStatusUrl: string;
   startWorkflowFilters: string[] | undefined;
+  /**
+   * Restores the pydantic-forms behavior from before 4.x, where form properties without a value
+   * (no default, or null as default) were not submitted to the backend. Defaults to false.
+   */
+  pydanticFormsLegacyNullHandling?: boolean;
 };
 
 export enum ColorModes {

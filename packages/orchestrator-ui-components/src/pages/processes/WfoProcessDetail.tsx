@@ -25,8 +25,8 @@ import {
   useDeleteProcessMutation,
   useRetryProcessMutation,
 } from '@/rtk/endpoints/processDetail';
-import { ProcessDetail, ProcessStatus } from '@/types';
-import { parseDateRelativeToToday, parseIsoString } from '@/utils';
+import { ProcessDetail, ProcessRetryableStatuses, ProcessStatus } from '@/types';
+import { listIncludesStatus, parseDateRelativeToToday, parseIsoString } from '@/utils';
 
 import { getIndexOfCurrentStep } from './timelineUtils';
 
@@ -50,6 +50,7 @@ const ProcessHeaderValue = ({ translationKey, value = '' }: ProcessHeaderValuePr
     >
       <EuiText size="xs">{t(translationKey)}</EuiText>
       <EuiText
+        size="m"
         css={{
           fontWeight: theme.font.weight.bold,
           fontSize: theme.size.m,
@@ -110,16 +111,10 @@ export const WfoProcessDetail = ({
   const { isEngineRunningNow } = useCheckEngineStatus();
   const { isAllowed } = usePolicy();
 
-  const listIncludesStatus = (processStatusesForDisabledState: ProcessStatus[], status?: string): boolean =>
-    status ? processStatusesForDisabledState.map((stat) => stat.toUpperCase()).includes(status) : false;
-
   const retryButtonIsDisabled =
     buttonsAreDisabled
     || processDetail?.userPermissions!.retryAllowed === false
-    || !listIncludesStatus(
-      [ProcessStatus.FAILED, ProcessStatus.API_UNAVAILABLE, ProcessStatus.INCONSISTENT_DATA, ProcessStatus.WAITING],
-      processDetail?.lastStatus,
-    );
+    || !listIncludesStatus(ProcessRetryableStatuses, processDetail?.lastStatus);
   const abortButtonIsDisabled =
     buttonsAreDisabled
     || listIncludesStatus([ProcessStatus.COMPLETED, ProcessStatus.ABORTED], processDetail?.lastStatus);
@@ -266,6 +261,7 @@ export const WfoProcessDetail = ({
                 >
                   <EuiText size="xs">{t('relatedSubscriptions')}</EuiText>
                   <EuiText
+                    size="m"
                     css={{
                       flex: 1,
                       whiteSpace: 'nowrap',

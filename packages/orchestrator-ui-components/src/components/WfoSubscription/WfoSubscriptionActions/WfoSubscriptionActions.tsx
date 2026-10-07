@@ -45,6 +45,7 @@ export const WfoSubscriptionActions: FC<WfoSubscriptionActionsProps> = ({
 }) => {
   const t = useTranslations('subscriptions.detail.actions');
   const { theme } = useOrchestratorTheme();
+
   const [isPopoverOpen, setPopover] = useState<boolean>(false);
   const router = useRouter();
   const disableQuery = isLoading || (!isPopoverOpen && compactMode);
@@ -70,6 +71,27 @@ export const WfoSubscriptionActions: FC<WfoSubscriptionActionsProps> = ({
   const onButtonClick = () => setPopover(!isPopoverOpen);
   const closePopover = () => setPopover(false);
 
+  const { SUBSCRIPTION_VALIDATE, SUBSCRIPTION_RECONCILE, SUBSCRIPTION_MODIFY, SUBSCRIPTION_TERMINATE, SET_IN_SYNC } =
+    PolicyResource;
+
+  const validateActionItems = getActionItemsByTarget(WorkflowTarget.VALIDATE, subscriptionActions);
+  const reconcileActionItems = getActionItemsByTarget(WorkflowTarget.RECONCILE, subscriptionActions);
+  const modifyActionItems = getActionItemsByTarget(WorkflowTarget.MODIFY, subscriptionActions);
+  const terminateActionItems = getActionItemsByTarget(WorkflowTarget.TERMINATE, subscriptionActions);
+
+  const allowedValidateActionItems = isAllowed(SUBSCRIPTION_VALIDATE + subscriptionId) ? validateActionItems : [];
+  const allowedReconcileActionItems = isAllowed(SUBSCRIPTION_RECONCILE + subscriptionId) ? reconcileActionItems : [];
+  const allowedModifyActionItems = isAllowed(SUBSCRIPTION_MODIFY + subscriptionId) ? modifyActionItems : [];
+  const allowedTerminateActionItems = isAllowed(SUBSCRIPTION_TERMINATE + subscriptionId) ? terminateActionItems : [];
+
+  const noActionItems = !(
+    allowedValidateActionItems.length > 0
+    || allowedReconcileActionItems.length > 0
+    || allowedModifyActionItems.length > 0
+    || allowedTerminateActionItems.length > 0
+    || (isAllowed(SET_IN_SYNC) && compactMode && subscriptionDetail)
+  );
+
   const button =
     compactMode ?
       <EuiButtonIcon
@@ -79,13 +101,17 @@ export const WfoSubscriptionActions: FC<WfoSubscriptionActionsProps> = ({
         onClick={onButtonClick}
         aria-label="Row context menu"
         isLoading={isLoading}
+        disabled={noActionItems}
       />
-    : <EuiButton iconType="arrowDown" iconSide="right" onClick={onButtonClick} isLoading={isLoading}>
+    : <EuiButton
+        iconType="chevronSingleDown"
+        iconSide="right"
+        onClick={onButtonClick}
+        isLoading={isLoading}
+        disabled={noActionItems}
+      >
         {t('actions')}
       </EuiButton>;
-
-  const { SUBSCRIPTION_VALIDATE, SUBSCRIPTION_RECONCILE, SUBSCRIPTION_MODIFY, SUBSCRIPTION_TERMINATE, SET_IN_SYNC } =
-    PolicyResource;
 
   const redirectToUrl = (actionName: string, isTask: boolean = false) => {
     const path = isTask ? PATH_START_NEW_TASK : PATH_START_NEW_WORKFLOW;
@@ -129,11 +155,6 @@ export const WfoSubscriptionActions: FC<WfoSubscriptionActionsProps> = ({
       redirectToUrl(actionName, isTask);
     }
   };
-
-  const validateActionItems = getActionItemsByTarget(WorkflowTarget.VALIDATE, subscriptionActions);
-  const reconcileActionItems = getActionItemsByTarget(WorkflowTarget.RECONCILE, subscriptionActions);
-  const modifyActionItems = getActionItemsByTarget(WorkflowTarget.MODIFY, subscriptionActions);
-  const terminateActionItems = getActionItemsByTarget(WorkflowTarget.TERMINATE, subscriptionActions);
 
   const compactItems = (
     <>

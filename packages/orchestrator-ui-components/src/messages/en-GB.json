@@ -411,8 +411,6 @@
       "numberOfRunningJobs": "Number of running jobs",
       "numberOfWorkersOnline": "Number of workers online",
       "pauseEngine": "Pause workflow engine",
-      "resetTextSearchIndex": "Reset text search index",
-      "resetTextSearchIndexButton": "Reset",
       "runningProcesses": "Running processes",
       "selectSettings": "Select cache",
       "settingsOverviewLink": "Settings Overview page in the documentation",
@@ -463,6 +461,9 @@
         "actions": "Actions",
         "lockedBySubscriptions": "This action is locked by the following subscriptions:",
         "modify": "Modify workflow",
+        "no_modify": "No modify workflows available",
+        "no_tasks": "No tasks available",
+        "no_terminate": "No terminate workflows available",
         "reconcile": "Reconcile workflow",
         "subscription": {
           "insufficient_workflow_permissions": "Insufficient user permissions to run this workflow",

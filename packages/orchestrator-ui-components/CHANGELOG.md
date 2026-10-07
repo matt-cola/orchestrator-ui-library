@@ -1,5 +1,42 @@
 # @orchestrator-ui/orchestrator-ui-components
 
+## 10.0.2
+
+### Patch Changes
+
+- 3fb1b84: Fix published npm package missing the `dist` folder. The package now declares an explicit `files` list so `dist` is always included regardless of `.gitignore` rules.
+
+## 10.0.1
+
+### Patch Changes
+
+- 3d7d0e5: Fixes broken build
+
+## 10.0.0
+
+### Major Changes
+
+- 46d19ce: Upgrades most packages to their newest major version. It includes
+  - `@elastic/eui` from 113 to 122. The peer dependency now requires `@elastic/eui@^122.1.0` (and transitively `@elastic/eui-theme-borealis@8.1.0`). This changes a lot of design tokens and icon names.
+  - `Next.js` from 15 to 16
+  - Pydantic forms from 3.* to 4.*. This changes the shape of the form payload: it now submits all properties in a form definition to the backend, including ones with no default or `null` as a default. These attributes were previously silently dropped. To restore the previous behavior, set the new optional `pydanticFormsLegacyNullHandling` property on `OrchestratorConfig` to `true`. It defaults to `false` and is passed to pydantic-forms as its `legacyNullHandling` toggle.
+  
+  React is still pinned to 18.* until ElasticUI supports React 19
+
+### Patch Changes
+
+- 69e493c: 247 Make contains default operator for filters, remove duplicated code
+
+## 9.0.1
+
+### Patch Changes
+
+- bfc177e: 207 Fix tooltip width that caused infinite scrolling when text is too long
+- 71837a2: Show retry user in step header when the user is different from before
+- 828ec0a: Reload data from the settings page when re-opening the page or changing settings tabs
+- 286dd1e: Show messages in the Actions pulldown if there are no tasks, or no modify or terminate workflows.
+- db198fa: Update workflow guide endpoint URL to match orchestrator-core, now that the workflow user guides feature is served directly by orchestrator-core (requires orchestrator-core >= 5.5.0) instead of the surf app.
+
 ## 9.0.0
 
 ### Major Changes
